@@ -1,20 +1,19 @@
 <!doctype html><meta charset=utf-8><title>→ Pepper</title>
 <meta http-equiv="Cache-Control" content="no-store, max-age=0">
-<body style="font:600 16px system-ui;padding:1.4rem;line-height:1.9">
+<body style="font:600 16px system-ui;padding:1.4rem;line-height:1.9;text-align:center">
 <script>
   // hash = pełny URL Peppera przekazany przez Charlesa (wszystko po pierwszym #)
   var pepper = location.hash.slice(1);                 // https://www.pepper.pl/...#charles=...
   var data   = pepper.replace(/^https:\/\//,'').replace('#','%23');
-  var intent = 'intent://'+data+'#Intent;scheme=https;package=com.kiwibrowser.browser;end';
-  // BEZ auto-fire — operator wybiera ręcznie (live-debug 2026-06-07).
+  // package=org.mozilla.firefox — stabilna, publiczna paczka Firefoksa (Tampermonkey).
+  // intent:// wyrywa się z WebView Telegrama i otwiera Firefoksa wprost na Pepperze.
+  var intent = 'intent://'+data+'#Intent;scheme=https;package=org.mozilla.firefox;end';
+  if (pepper) location.href = intent;                  // auto: otwórz Firefoksa na Pepperze
 </script>
-<p style="text-align:center"><a id=p href="#" style="font-size:24px">➡️ Otwórz w Pepper (redirect)</a></p>
-<p style="text-align:center;opacity:.55;font-size:14px"><a id=k href="#">…wymuś Kiwi (intent)</a></p>
-<hr style="margin:1.4rem 0">
-<p style="font-size:12px;opacity:.7;margin:0">diagnostyka — przepisz mi to:</p>
-<p id=ua style="font-size:12px;word-break:break-all;background:#eee;padding:.5rem;border-radius:6px"></p>
+<p>Jeśli nie przeskoczyło automatycznie:</p>
+<p><a id=f href="#" style="font-size:22px">🦊 Otwórz w Firefoksie</a></p>
+<p style="opacity:.55;font-size:14px"><a id=p href="#">…albo zwykły redirect</a></p>
 <script>
-  p.href = pepper;      // czysty in-browser redirect (nie wymaga nazwy paczki)
-  k.href = intent;      // wymuszenie Kiwi po paczce
-  document.getElementById('ua').textContent = navigator.userAgent;
+  f.href = intent;      // fallback z user-gesture (gdyby auto-intent był zablokowany)
+  p.href = pepper;      // ostateczny fallback: czysty redirect
 </script>
