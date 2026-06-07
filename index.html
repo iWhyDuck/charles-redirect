@@ -1,18 +1,20 @@
 <!doctype html><meta charset=utf-8><title>→ Pepper</title>
-<body style="font:600 18px system-ui;text-align:center;padding:2rem;line-height:2.4">
+<meta http-equiv="Cache-Control" content="no-store, max-age=0">
+<body style="font:600 16px system-ui;padding:1.4rem;line-height:1.9">
 <script>
   // hash = pełny URL Peppera przekazany przez Charlesa (wszystko po pierwszym #)
   var pepper = location.hash.slice(1);                 // https://www.pepper.pl/...#charles=...
-  // intent:// wymusza przeglądarkę po nazwie paczki; %23 = zakodowany fragment #charles=.
   var data   = pepper.replace(/^https:\/\//,'').replace('#','%23');
   var intent = 'intent://'+data+'#Intent;scheme=https;package=com.kiwibrowser.browser;end';
-  // BEZ auto-fire: zła paczka rzucała do Play Store, zanim dało się tknąć fallback.
-  // Operator wybiera ścieżkę ręcznie (diagnostyka 2026-06-07).
+  // BEZ auto-fire — operator wybiera ręcznie (live-debug 2026-06-07).
 </script>
-<p>Otwórz ofertę w przeglądarce:</p>
-<p><a id=p href="#" style="font-size:24px">➡️ Otwórz w Pepper (redirect)</a></p>
-<p style="opacity:.55;font-size:15px"><a id=k href="#">…albo wymuś Kiwi (intent — wymaga poprawnej paczki)</a></p>
+<p style="text-align:center"><a id=p href="#" style="font-size:24px">➡️ Otwórz w Pepper (redirect)</a></p>
+<p style="text-align:center;opacity:.55;font-size:14px"><a id=k href="#">…wymuś Kiwi (intent)</a></p>
+<hr style="margin:1.4rem 0">
+<p style="font-size:12px;opacity:.7;margin:0">diagnostyka — przepisz mi to:</p>
+<p id=ua style="font-size:12px;word-break:break-all;background:#eee;padding:.5rem;border-radius:6px"></p>
 <script>
   p.href = pepper;      // czysty in-browser redirect (nie wymaga nazwy paczki)
-  k.href = intent;      // wymuszenie Kiwi po paczce (do naprawy nazwy)
+  k.href = intent;      // wymuszenie Kiwi po paczce
+  document.getElementById('ua').textContent = navigator.userAgent;
 </script>
