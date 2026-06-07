@@ -1,18 +1,18 @@
 <!doctype html><meta charset=utf-8><title>→ Pepper</title>
-<body style="font:600 18px system-ui;text-align:center;padding:2rem">
+<body style="font:600 18px system-ui;text-align:center;padding:2rem;line-height:2.4">
 <script>
   // hash = pełny URL Peppera przekazany przez Charlesa (wszystko po pierwszym #)
   var pepper = location.hash.slice(1);                 // https://www.pepper.pl/...#charles=...
-  // intent:// wymusza KIWI, wyrywa się z in-app webview Telegrama i omija apkę Peppera.
-  // %23 = zakodowany fragment #charles=..., by przetrwał parsowanie intent-URI.
+  // intent:// wymusza przeglądarkę po nazwie paczki; %23 = zakodowany fragment #charles=.
   var data   = pepper.replace(/^https:\/\//,'').replace('#','%23');
   var intent = 'intent://'+data+'#Intent;scheme=https;package=com.kiwibrowser.browser;end';
-  if (pepper) location.href = intent;                  // auto-próba (Kiwi)
+  // BEZ auto-fire: zła paczka rzucała do Play Store, zanim dało się tknąć fallback.
+  // Operator wybiera ścieżkę ręcznie (diagnostyka 2026-06-07).
 </script>
-<p>Jeśli nie przeskoczyło automatycznie:</p>
-<p><a id=k href="#">🦅 Otwórz w Kiwi (autofill)</a></p>
-<p style="opacity:.6"><a id=p href="#">…albo zwykłym redirectem</a></p>
+<p>Otwórz ofertę w przeglądarce:</p>
+<p><a id=p href="#" style="font-size:24px">➡️ Otwórz w Pepper (redirect)</a></p>
+<p style="opacity:.55;font-size:15px"><a id=k href="#">…albo wymuś Kiwi (intent — wymaga poprawnej paczki)</a></p>
 <script>
-  k.href = intent;                                     // fallback z user-gesture
-  p.href = pepper;                                     // awaryjnie: czysty redirect do Peppera
+  p.href = pepper;      // czysty in-browser redirect (nie wymaga nazwy paczki)
+  k.href = intent;      // wymuszenie Kiwi po paczce (do naprawy nazwy)
 </script>
