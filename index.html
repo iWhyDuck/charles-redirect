@@ -2,18 +2,25 @@
 <meta http-equiv="Cache-Control" content="no-store, max-age=0">
 <body style="font:600 16px system-ui;padding:1.4rem;line-height:1.9;text-align:center">
 <script>
-  // hash = pełny URL Peppera przekazany przez Charlesa (wszystko po pierwszym #)
-  var pepper = location.hash.slice(1);                 // https://www.pepper.pl/...#charles=...
-  var data   = pepper.replace(/^https:\/\//,'').replace('#','%23');
-  // package=org.mozilla.firefox — stabilna, publiczna paczka Firefoksa (Tampermonkey).
-  // intent:// wyrywa się z WebView Telegrama i otwiera Firefoksa wprost na Pepperze.
-  var intent = 'intent://'+data+'#Intent;scheme=https;package=org.mozilla.firefox;end';
-  if (pepper) location.href = intent;                  // auto: otwórz Firefoksa na Pepperze
+  // URL Peppera podróżuje jako parametr query ?p= (encodeURIComponent), NIE jako #fragment.
+  // Powód: intent:// nie przenosi fragmentu URL-a docelowego — %23 ląduje literalnie
+  //   w ścieżce (pepper.pl/...add%23charles=...) → 404. Query przeżywa intent czysto.
+  var p = new URLSearchParams(location.search).get('p');
+  var pepper = p ? decodeURIComponent(p) : '';          // https://www.pepper.pl/...#charles=...
+  var inFirefox = /Firefox/.test(navigator.userAgent);
+  // intent otwiera w Firefoksie SAMĄ tę stronę-hop (ścieżka istnieje → brak 404),
+  // niosąc ?p= w query; reszta dzieje się już w Firefoksie.
+  var selfUrl = location.host + location.pathname + location.search;
+  var intent  = 'intent://' + selfUrl + '#Intent;scheme=https;package=org.mozilla.firefox;end';
+  if (pepper) {
+    if (inFirefox) location.replace(pepper);            // w Firefoksie → skok na Peppera (prawdziwy #)
+    else           location.href = intent;              // w WebView/Chrome → otwórz hop w Firefoksie
+  }
 </script>
 <p>Jeśli nie przeskoczyło automatycznie:</p>
 <p><a id=f href="#" style="font-size:22px">🦊 Otwórz w Firefoksie</a></p>
-<p style="opacity:.55;font-size:14px"><a id=p href="#">…albo zwykły redirect</a></p>
+<p style="opacity:.55;font-size:14px"><a id=p href="#">…albo zwykły redirect (gdy już w przeglądarce)</a></p>
 <script>
   f.href = intent;      // fallback z user-gesture (gdyby auto-intent był zablokowany)
-  p.href = pepper;      // ostateczny fallback: czysty redirect
+  p.href = pepper;      // fallback: zwykły redirect (działa gdy jesteś już w Firefoksie)
 </script>
